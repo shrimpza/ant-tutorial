@@ -27,8 +27,8 @@
         <mkdir dir="${dist.dir}"/>
 
         <jar jarfile="${dist.dir}/${ant.project.name}.jar">
-            <fileset dir="${build.src.dir}" />
-            <zipfileset dir="${src.dir}" excludes="**/*.java"/>
+            <fileset dir="${build.src.dir}"/>
+            <fileset dir="${src.dir}" excludes="**/*.java"/>
         </jar>
     </target>
     
