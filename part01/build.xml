@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="hello-world" default="dist" basedir=".">
+
+    <!-- basic paths --> 
+    <property name="src.dir" location="src"/>
+    <property name="dist.dir" location="dist"/>
+    <property name="build.dir" location="build"/>
+
+    <!-- properties for build output, nothing should need to change beyond this point -->
+    <property name="build.src.dir" location="${build.dir}/src"/>
+
+    <path id="default.classpath">
+        <pathelement path="${build.src.dir}"/>
+    </path>
+
+    <!-- Simple source build -->
+    <target name="build" description="compile source">
+        <mkdir dir="${build.src.dir}"/>
+
+        <javac srcdir="${src.dir}" destdir="${build.src.dir}" includeantruntime="false">
+            <classpath refid="default.classpath"/>
+        </javac>
+    </target>
+
+    <!-- Build distribution -->
+    <target name="dist" depends="build" description="generate distribution">
+        <mkdir dir="${dist.dir}"/>
+
+        <jar jarfile="${dist.dir}/${ant.project.name}.jar">
+            <fileset dir="${build.src.dir}" />
+            <zipfileset dir="${src.dir}" excludes="**/*.java"/>
+        </jar>
+    </target>
+    
+    <!-- Clean compiled files -->
+    <target name="clean" description="clean up" >
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+</project>
