@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="hello-world" default="dist" basedir=".">
 
+    <!-- for a runnable jar file, add the main class name -->
+    <property name="main.class" value="net.shrimpworks.ant.Main"/>
+
     <!-- basic paths --> 
     <property name="src.dir" location="src"/>
     <property name="dist.dir" location="dist"/>
@@ -27,6 +30,10 @@
         <mkdir dir="${dist.dir}"/>
 
         <jar jarfile="${dist.dir}/${ant.project.name}.jar">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+            </manifest>
+
             <fileset dir="${build.src.dir}"/>
             <fileset dir="${src.dir}" excludes="**/*.java"/>
         </jar>
