@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.4">
+    <info organisation="org.apache" module="${ant.project.name}"/>
+
+    <configurations>
+        <conf name="default" />
+    </configurations>
+
+    <dependencies>
+        <!-- project dependencies -->
+        <dependency org="org.slf4j" name="slf4j-api" rev="1.7.12" conf="default" />
+        <dependency org="org.slf4j" name="slf4j-simple" rev="1.7.12" conf="default" />
+    </dependencies>
+</ivy-module>
