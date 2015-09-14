@@ -4,11 +4,15 @@
 
     <configurations>
         <conf name="default" />
+        <conf name="test" extends="default"/>
     </configurations>
 
     <dependencies>
         <!-- project dependencies -->
         <dependency org="org.slf4j" name="slf4j-api" rev="1.7.12" conf="default" />
         <dependency org="org.slf4j" name="slf4j-simple" rev="1.7.12" conf="default" />
+
+        <!-- test dependencies -->
+        <dependency org="junit" name="junit" rev="4.11" conf="test->default"/>
     </dependencies>
 </ivy-module>
