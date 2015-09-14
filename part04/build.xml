@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="hello-world" default="dist" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <!-- for a runnable jar file, add the main class name -->
+    <property name="main.class" value="net.shrimpworks.ant.Main"/>
+
+    <!-- basic paths --> 
+    <property name="src.dir" location="src"/>
+    <property name="lib.dir" location="lib"/>
+    <property name="dist.dir" location="dist"/>
+    <property name="build.dir" location="build"/>
+
+    <!-- properties for build output, nothing should need to change beyond this point -->
+    <property name="build.src.dir" location="${build.dir}/src"/>
+
+    <path id="default.classpath">
+        <fileset dir="${lib.dir}" includes="default/*.jar"/>
+        <pathelement path="${build.src.dir}"/>
+    </path>
+
+    <path id="dist.classpath">
+        <fileset dir="${dist.dir}" includes="lib/*.jar"/>
+    </path>
+
+    <!-- Ivy configuration -->
+    <property name="ivy.install.version" value="2.4.0" />
+    <property name="ivy.home" value="${user.home}/.ant" />
+    <property name="ivy.jar.dir" value="${ivy.home}/lib" />
+    <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+
+    <!-- Ivy download -->
+    <target name="ivy-download">
+        <mkdir dir="${ivy.jar.dir}"/>
+        <get src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" 
+             dest="${ivy.jar.file}" usetimestamp="true"/>
+    </target>
+
+    <!-- Ivy initialisation -->
+    <target name="ivy-init" depends="ivy-download">
+        <path id="ivy.lib.path" path="${ivy.jar.file}"/>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                 uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>
+
+    <!-- Ivy dependency resolution -->
+    <target name="ivy-resolve" depends="ivy-init" description="retrieve dependencies with ivy">
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" />
+    </target>
+
+    <!-- Simple source build -->
+    <target name="build" depends="ivy-resolve" description="compile source">
+        <mkdir dir="${build.src.dir}"/>
+
+        <javac srcdir="${src.dir}" destdir="${build.src.dir}" includeantruntime="false">
+            <classpath refid="default.classpath"/>
+        </javac>
+    </target>
+
+    <!-- Build distribution -->
+    <target name="dist" depends="build" description="generate distribution">
+        <mkdir dir="${dist.dir}/lib"/>
+
+        <copy todir="${dist.dir}/lib">
+            <fileset dir="${lib.dir}/default" includes="*.jar" erroronmissingdir="false">
+                <exclude name="**/*-javadoc.jar"/>
+                <exclude name="**/*-sources.jar"/>
+            </fileset>
+        </copy>
+
+        <manifestclasspath property="dist.manifest.classpath" jarfile="${dist.dir}/${ant.project.name}.jar">
+            <classpath refid="dist.classpath" />
+        </manifestclasspath>
+
+        <jar jarfile="${dist.dir}/${ant.project.name}.jar">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+                <attribute name="Class-Path" value="${dist.manifest.classpath}"/>
+            </manifest>
+            <fileset dir="${build.src.dir}" />
+            <zipfileset dir="${src.dir}" excludes="**/*.java"/>
+        </jar>
+    </target>
+    
+    <!-- Clean compiled files -->
+    <target name="clean" description="clean up">
+        <delete dir="${build.dir}"/>
+        <delete dir="${lib.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+</project>
